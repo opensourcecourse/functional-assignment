@@ -1,6 +1,6 @@
 """Task 4: Practice with recursion."""
 from pathlib import Path
-from typing import Dict, Optional, Set, Callable
+from typing import Callable, Dict, Optional, Set
 
 import pydantic
 from typing_extensions import Literal
@@ -56,9 +56,9 @@ def load_data(path=None):
 
 
 def count_people(
-        person: Individual,
-        direction: Literal['children', 'parents']='children',
-        predicate: Callable[[Individual], bool] = lambda x: True,
+    person: Individual,
+    direction: Literal["children", "parents"] = "children",
+    predicate: Callable[[Individual], bool] = lambda x: True,
 ):
     """
     Count people in an individuals family tree which meet some requirement.
@@ -81,7 +81,6 @@ def count_people(
     >>> random_person = data[random.choice(list(data))]
     >>> count_people(random_person, predicate=lambda x: len(x.children) > 2)
     """
-
 
 
 if __name__ == "__main__":
