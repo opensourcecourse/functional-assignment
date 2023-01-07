@@ -1,16 +1,14 @@
-"""
-Tests for task3.
-"""
+"""Tests for task3."""
+from dataclasses import FrozenInstanceError, is_dataclass
+
 import pytest
 
 from task_3 import GeophysicsDepartment
 
-from dataclasses import FrozenInstanceError, is_dataclass
-
 
 def test_is_dataclass():
     """GP should be a dataclass."""
-    gp = GeophysicsDepartment()
+    gp = GeophysicsDepartment(student_count=30, faculty_count=8)
     assert is_dataclass(gp)
 
 

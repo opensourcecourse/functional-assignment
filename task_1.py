@@ -1,6 +1,4 @@
-"""
-Fun with higher order functions.
-"""
+"""Fun with higher order functions."""
 REGISTERED_FUNCTIONS = {}
 
 

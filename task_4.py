@@ -1,76 +1,88 @@
-"""
-Practice with recursion.
-"""
-from __future__ import annotations
+"""Task 4: Practice with recursion."""
+from pathlib import Path
+from typing import Dict, Optional, Set, Callable
 
-import random
-from typing import Sequence, Type
+import pydantic
+from typing_extensions import Literal
 
-from pydantic import BaseModel, Field
-from faker import Faker
-
-fake_maker = Faker()
+# --- models for family data
 
 
-class WonderLandCreature(BaseModel):
-    name: str = Field(default_factory=fake_maker.name, max_length=15)
-    bag: Sequence[WonderLandCreature] | Sequence[Sequence[WonderLandCreature]] = []
-    _subclasses = []
+class Individual(pydantic.BaseModel):
+    """An individual model.
 
-    def __init_subclass__(cls, **kwargs):
-        cls._subclasses.append(cls)
+    Parents, children, and spouses are keys to other
+    individual ids.
+    """
+
+    id: str
+    name: str
+    surname: str
+    gender: Literal["M", "F"]
+    birth_year: Optional[int] = None
+    death_year: Optional[int] = None
+    parents: Set[str] = set()
+    children: Set[str] = set()
+    spouses: Set[str] = set()
 
     @classmethod
-    def random_cls(cls) -> Type[WonderLandCreature]:
-        return random.choice(cls._subclasses)
+    def from_element(cls, el):
+        """Populate Family from element."""
+        data = dict(
+            id=el.get_pointer(),
+            name=" ".join(el.get_name()),
+            surname=el.get_name()[-1],
+            gender=el.get_gender(),
+            birth_year=el.get_birth_year(),
+            death_year=el.get_death_year(),
+        )
+        return cls(**data)
 
 
-class Rabbit(WonderLandCreature):
-    pass
+class Group(pydantic.BaseModel):
+    """A dict-like container for individuals."""
+
+    individuals: Dict[str, Individual] = {}
+
+    def __getitem__(self, item):
+        return self.individuals[item]
 
 
-class Walrus(WonderLandCreature):
-    pass
+def load_data(path=None):
+    """Loads the family tree data into memory."""
+    if path is None:
+        path = Path(__file__).absolute().parent / "data" / "family_tree.json"
+    return Group.parse_file(path)
 
 
-class PlayingCard(WonderLandCreature):
-    pass
-
-
-class Mushroom(WonderLandCreature):
-    pass
-
-
-class Cheshire(WonderLandCreature):
-    pass
-
-
-def generate_data(recursion_level=0, max_depth=8) -> WonderLandCreature:
-    """Generates data """
-    bag = [
-        generate_data(recursion_level + 1)
-        for _ in range(max_depth - random.randrange(recursion_level, max_depth + 1))
-    ]
-    # maybe nest list more for fun
-    if random.randrange(0, 10) > 5:
-        bag = [bag]
-    cls = WonderLandCreature.random_cls()
-    return cls(bag=bag)
-
-
-def count_creatures(creature: WonderLandCreature) -> int:
-    """Count how many creatures are in the recursive structure."""
-
-
-def classify_creatures(
-        creature: WonderLandCreature
-) -> dict[str, list[WonderLandCreature]]:
+def count_people(
+        person: Individual,
+        direction: Literal['children', 'parents']='children',
+        predicate: Callable[[Individual], bool] = lambda x: True,
+):
     """
-    Separate each of the creatures into a dict of {creature_type_name: [creature]}
+    Count people in an individuals family tree which meet some requirement.
+
+    Parameters
+    ----------
+    person
+        The person with which to start.
+    direction
+        The direction to travel (down through children or up through parents).
+    predicate
+        A callable which take an individual as the only argument and returns
+        True or False if they meet the requirement.
+
+    Examples
+    --------
+    >>> import random
+    >>> data = load_data()
+    >>> # Count direct descendants with more than two children.
+    >>> random_person = data[random.choice(list(data))]
+    >>> count_people(random_person, predicate=lambda x: len(x.children) > 2)
     """
 
 
-def filter_creatures_by_name(creature, character) -> list[WonderLandCreature]:
-    """
-    Return a list of creatures whose name starts with character.
-    """
+
+if __name__ == "__main__":
+    data = load_data()

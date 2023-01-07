@@ -1,14 +1,11 @@
-"""
-Tests for function registration.
-"""
+"""Tests for function registration."""
 
-from task_1 import register, REGISTERED_FUNCTIONS
+from task_1 import REGISTERED_FUNCTIONS, register
 
 
 def test_function_registered():
     """Ensure the function shows up in the list."""
-
-    name = '_test_func'
+    name = "_test_func"
 
     @register(name)
     def ok_function():

@@ -1,7 +1,6 @@
-"""
-A task for creating a logging decorator.
-"""
+"""A task for creating a logging decorator."""
 import inspect
+
 
 def bind_args_kwargs(func, output, *args, **kwargs):
     """Return a string for printing logging."""
@@ -34,11 +33,11 @@ def print_input_output(func):
 if __name__ == "__main__":
     # tests for bind_args_kwargs
     def test_func(a, b=2):
-        """A test function for bing_args_kwargs"""
+        """A test function for bing_args_kwargs."""
         return a + b
 
-    expected = 'test_func(a=1, b=2) -> 3'
+    expected = "test_func(a=1, b=2) -> 3"
     assert bind_args_kwargs(test_func, 3, a=1) == expected
     assert bind_args_kwargs(test_func, 3, a=1, b=2) == expected
-    expected_2 = 'test_func(a=3, b=3) -> 6'
+    expected_2 = "test_func(a=3, b=3) -> 6"
     assert bind_args_kwargs(test_func, 6, a=3, b=3) == expected_2
