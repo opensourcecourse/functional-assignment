@@ -57,6 +57,7 @@ def load_data(path=None):
 
 def count_people(
     person: Individual,
+    group: Group,
     direction: Literal["children", "parents"] = "children",
     predicate: Callable[[Individual], bool] = lambda x: True,
 ):
@@ -67,6 +68,8 @@ def count_people(
     ----------
     person
         The person with which to start.
+    group
+        The group to which the person belongs.
     direction
         The direction to travel (down through children or up through parents).
     predicate
@@ -78,8 +81,8 @@ def count_people(
     >>> import random
     >>> data = load_data()
     >>> # Count direct descendants with more than two children.
-    >>> random_person = data[random.choice(list(data))]
-    >>> count_people(random_person, predicate=lambda x: len(x.children) > 2)
+    >>> person = data[random.choice(list(data))]
+    >>> count = count_people(person, predicate=lambda x: len(x.children) > 2)
     """
 
 
