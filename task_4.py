@@ -1,4 +1,5 @@
 """Task 4: Practice with recursion."""
+import datetime
 from pathlib import Path
 from typing import Callable, Dict, Optional, Set
 
@@ -8,8 +9,9 @@ from typing_extensions import Literal
 # --- models for family data
 
 
-class Individual(pydantic.BaseModel):
-    """An individual model.
+class Individual(pydantic.BaseModel, frozen=True):
+    """
+    A model of an individual.
 
     Parents, children, and spouses are keys to other
     individual ids.
@@ -25,18 +27,16 @@ class Individual(pydantic.BaseModel):
     children: Set[str] = set()
     spouses: Set[str] = set()
 
-    @classmethod
-    def from_element(cls, el):
-        """Populate Family from element."""
-        data = dict(
-            id=el.get_pointer(),
-            name=" ".join(el.get_name()),
-            surname=el.get_name()[-1],
-            gender=el.get_gender(),
-            birth_year=el.get_birth_year(),
-            death_year=el.get_death_year(),
-        )
-        return cls(**data)
+    @property
+    def age(self) -> Optional[int]:
+        """Return the estimated age of the person."""
+        birth_year = self.birth_year
+        if birth_year is None or birth_year < 0:
+            raise ValueError(f"Unknown Age of {self.name}: {self.id}")
+        end_year = self.death_year
+        if end_year is None or end_year < 0:
+            end_year = datetime.datetime.now().year
+        return end_year - birth_year
 
 
 class Group(pydantic.BaseModel):
@@ -56,17 +56,17 @@ def load_data(path=None):
 
 
 def count_people(
-    person: Individual,
+    individual: Individual,
     group: Group,
-    direction: Literal["children", "parents"] = "children",
+    direction: Literal["children", "parents"] = "parents",
     predicate: Callable[[Individual], bool] = lambda x: True,
-):
+) -> int:
     """
     Count people in an individuals family tree which meet some requirement.
 
     Parameters
     ----------
-    person
+    individual
         The person with which to start.
     group
         The group to which the person belongs.
@@ -83,8 +83,9 @@ def count_people(
     >>> # Count direct descendants with more than two children.
     >>> person = data[random.choice(list(data))]
     >>> count = count_people(person, predicate=lambda x: len(x.children) > 2)
+
+    Notes
+    -----
+    This function will also count the initial individual if they pass the
+    predicate.
     """
-
-
-if __name__ == "__main__":
-    data = load_data()
