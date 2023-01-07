@@ -6,6 +6,9 @@ than learning functional programming in the abstract, (which python is
 arguably not a good fit for anyway) we are going to practice
 using some of python's functional features.
 
+Once you are done with the following tasks, open a new PR and ping the instructors
+to solicit feedback (include @opensourcecourse/instructors in a comment).
+
 
 ## Task 1: Function registration (5 points)
 
