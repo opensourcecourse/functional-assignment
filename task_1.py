@@ -8,9 +8,10 @@ def register(name):
 
     Examples
     --------
-    >>> @register_function('first')
+    >>> @register('first')
     ... def first_function():
     ...    pass
+
     >>> assert 'first' in REGISTERED_FUNCTIONS
     >>> assert REGISTERED_FUNCTIONS['first'] == first_function
     """
